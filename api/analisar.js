@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
     try {
       msgs = JSON.parse(octaText);
     } catch (e) {
-      res.status(502).json({ error: `JSON inválido do Octadesk: ${octaText.substring(0, 200)}` });
+      res.status(502).json({ error: `JSON inválido do Octadesk: ${octaText.substring(0, 1000)}` });
       return;
     }
 
