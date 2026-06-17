@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analisador Jurídico Trabalhista</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F6F3;
+      --surface: #FFFFFF;
+      --border: #E2E0DA;
+      --text: #1A1917;
+      --muted: #6B6860;
+      --accent: #1B4332;
+      --accent-light: #D1FAE5;
+      --accent-text: #065F46;
+      --amber: #92400E;
+      --amber-light: #FEF3C7;
+      --red: #991B1B;
+      --red-light: #FEE2E2;
+      --blue: #1E40AF;
+      --blue-light: #DBEAFE;
+      --font-display: 'Lora', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--accent);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    header h1 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    header span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      margin-left: auto;
+      font-family: var(--font-body);
+    }
+
+    .main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .intro {
+      margin-bottom: 2rem;
+    }
+
+    .intro h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font-body);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .btn:hover { opacity: 0.88; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover { background: var(--bg); }
+
+    .progress-wrap {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    .loading-state {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 2rem 0;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .load-text {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .result-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .check-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-text);
+      font-size: 12px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta-cell {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+    }
+
+    .meta-cell .lbl {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+
+    .meta-cell .val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-left: 4px;
+    }
+
+    .badge-green { background: var(--accent-light); color: var(--accent-text); }
+    .badge-amber { background: var(--amber-light); color: var(--amber); }
+    .badge-red { background: var(--red-light); color: var(--red); }
+
+    .item {
+      padding: 10px 14px;
+      margin: 6px 0;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .item-green { border-left: 3px solid var(--accent); background: #F0FDF4; }
+    .item-amber { border-left: 3px solid #D97706; background: var(--amber-light); }
+    .item-red { border-left: 3px solid #DC2626; background: var(--red-light); }
+
+    .item-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .item-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    .minuta-box {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-size: 13px;
+      line-height: 1.9;
+      color: var(--text);
+      white-space: pre-wrap;
+      font-family: 'Courier New', monospace;
+      max-height: 360px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+
+    .copy-btn {
+      font-size: 12px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px 10px;
+      cursor: pointer;
+      margin-left: auto;
+      font-family: var(--font-body);
+    }
+
+    .copy-btn:hover { background: var(--bg); }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+    .error-box {
+      background: var(--red-light);
+      border: 1px solid #FCA5A5;
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-size: 13px;
+      color: var(--red);
+      line-height: 1.6;
+    }
+
+    #loading-section { display: none; }
+    #result-section { display: none; }
+    #error-section { display: none; }
+
+    @media (max-width: 600px) {
+      .main { padding: 1.5rem 1rem; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .input-row { flex-direction: column; }
+      header { padding: 1rem; }
+      header span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h1>Analisador Jurídico</h1>
+  <span>Direito Trabalhista · Powered by IA</span>
+</header>
+
+<div class="main">
+  <div class="intro">
+    <h2>Análise de direitos trabalhistas</h2>
+    <p>Cole o ID ou link da conversa do Octadesk para gerar automaticamente o relatório de direitos e a minuta da reclamatória.</p>
+  </div>
+
+  <div id="form-section">
+    <div class="card">
+      <label class="field-label">ID ou link da conversa (Octadesk)</label>
+      <div class="input-row">
+        <input type="text" id="conv-input" placeholder="8fa2dff8-308a-41c9-918f-9d75c9f7f680  ou  https://app.octadesk.com/chat/..." />
+        <button class="btn" id="btn-buscar" onclick="buscar()">
+          Analisar →
+        </button>
+      </div>
+      <p class="hint">O ID aparece na URL da conversa no Octadesk após /chat/</p>
+    </div>
+  </div>
+
+  <div id="loading-section">
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+    </div>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span class="load-text" id="load-text">Buscando conversa no Octadesk...</span>
+    </div>
+  </div>
+
+  <div id="error-section">
+    <div class="error-box" id="error-msg"></div>
+    <div style="margin-top: 12px;">
+      <button class="btn btn-outline" onclick="resetar()">Tentar novamente</button>
+    </div>
+  </div>
+
+  <div id="result-section">
+    <div class="result-header">
+      <div class="result-title">
+        <div class="check-icon">✓</div>
+        Análise concluída
+      </div>
+      <button class="btn btn-outline" onclick="resetar()">Nova análise</button>
+    </div>
+
+    <div class="meta-grid" id="meta-grid"></div>
+
+    <div class="card">
+      <div class="section-head">
+        <span style="color: #065F46;">⚖</span>
+        Direitos identificados
+        <span class="badge badge-green" id="b-dir"></span>
+      </div>
+      <div id="l-dir"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <span style="color: #92400E;">⚠</span>
+        Pontos a aprofundar
+        <span class="badge badge-amber" id="b-alert"></span>
+      </div>
+      <div id="l-alert"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <span style="color: #991B1B;">✗</span>
+        Dados faltantes
+        <span class="badge badge-red" id="b-falt"></span>
+      </div>
+      <div id="l-falt"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <span style="color: #1E40AF;">📄</span>
+        Minuta inicial da reclamatória
+        <button class="copy-btn" onclick="copiarMinuta()" id="copy-btn">copiar</button>
+      </div>
+      <div class="minuta-box" id="minuta-box"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function extractId(val) {
+    val = val.trim();
+    if (val.includes('/')) return val.split('/').filter(Boolean).pop().split('?')[0];
+    return val;
+  }
+
+  function setProgress(pct, txt) {
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('load-text').textContent = txt;
+  }
+
+  function showSection(id) {
+    ['form-section', 'loading-section', 'error-section', 'result-section'].forEach(s => {
+      document.getElementById(s).style.display = s === id ? 'block' : 'none';
+    });
+  }
+
+  function showError(msg) {
+    document.getElementById('error-msg').innerHTML = msg;
+    showSection('error-section');
+  }
+
+  function resetar() {
+    document.getElementById('conv-input').value = '';
+    showSection('form-section');
+  }
+
+  async function buscar() {
+    const raw = document.getElementById('conv-input').value.trim();
+    if (!raw) { alert('Cole o ID ou link da conversa.'); return; }
+    const id = extractId(raw);
+
+    showSection('loading-section');
+    setProgress(10, 'Buscando conversa no Octadesk...');
+
+    try {
+      const res = await fetch('/api/analisar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+
+      setProgress(50, 'Analisando direitos trabalhistas...');
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Erro desconhecido' }));
+        throw new Error(err.error || `Erro HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      setProgress(90, 'Gerando minuta da reclamatória...');
+
+      setTimeout(() => {
+        setProgress(100, 'Concluído!');
+        setTimeout(() => renderResultado(data), 300);
+      }, 400);
+
+    } catch(e) {
+      showError(`<strong>Não foi possível analisar a conversa.</strong><br><br>${e.message}<br><br>Verifique se o ID da conversa está correto e tente novamente.`);
+    }
+  }
+
+  function renderResultado(r) {
+    const c = r.cliente;
+    document.getElementById('meta-grid').innerHTML = `
+      <div class="meta-cell"><div class="lbl">Cliente</div><div class="val">${c.nome}</div></div>
+      <div class="meta-cell"><div class="lbl">Função</div><div class="val">${c.funcao}</div></div>
+      <div class="meta-cell"><div class="lbl">Tempo de trabalho</div><div class="val">${c.tempo_trabalho}</div></div>
+      <div class="meta-cell"><div class="lbl">Situação</div><div class="val" style="font-weight:400; font-size:12px;">${c.situacao}</div></div>
+    `;
+
+    const ld = document.getElementById('l-dir');
+    ld.innerHTML = '';
+    r.direitos.forEach(d => {
+      ld.innerHTML += `<div class="item item-green"><div class="item-title">${d.titulo}</div><div class="item-desc">${d.descricao}</div></div>`;
+    });
+    document.getElementById('b-dir').textContent = r.direitos.length + ' identificados';
+
+    const la = document.getElementById('l-alert');
+    la.innerHTML = '';
+    r.alertas.forEach(a => {
+      la.innerHTML += `<div class="item item-amber"><div class="item-title">${a.titulo}</div><div class="item-desc">${a.descricao}</div></div>`;
+    });
+    document.getElementById('b-alert').textContent = r.alertas.length + ' pontos';
+
+    const lf = document.getElementById('l-falt');
+    lf.innerHTML = '';
+    r.dados_faltantes.forEach(f => {
+      lf.innerHTML += `<div class="item item-red"><div class="item-title">${f.titulo}</div><div class="item-desc">${f.descricao}</div></div>`;
+    });
+    document.getElementById('b-falt').textContent = r.dados_faltantes.length + ' dados';
+
+    document.getElementById('minuta-box').textContent = r.minuta;
+    showSection('result-section');
+  }
+
+  function copiarMinuta() {
+    const t = document.getElementById('minuta-box').textContent;
+    navigator.clipboard.writeText(t).then(() => {
+      const b = document.getElementById('copy-btn');
+      b.textContent = '✓ copiado';
+      setTimeout(() => { b.textContent = 'copiar'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
